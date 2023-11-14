@@ -1,0 +1,129 @@
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    color: #32AAFB;
+}
+
+h2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color: cadetblue;
+}
+
+p,li {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.welcome_window {
+  padding: 20px;
+  text-align: center;
+}
+
+/* button styling */
+.button-5 {
+  align-items: center;
+  background-clip: padding-box;
+  background-color: #fa6400;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  min-height: 3rem;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  transition: all 250ms;
+  width: auto;
+}
+
+/* register button */
+.register-button-5 {
+  align-items: center;
+  background-color: transparent;
+  border: 2px solid #fa6400;
+  border-radius: .25rem;
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: #fa6400;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  min-height: 3rem;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  transition: all 250ms;
+  width: auto;
+}
+
+/* Button hover and focus styles */
+.register-button-5:hover,
+.register-button-5:focus {
+  border: 2px solid #fb8332;
+  color: #fb8332;
+  /* Text color change */
+  box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.register-button-5:hover, .button-5:hover {
+  transform: translateY(-1px);
+}
+
+.register-button-5:active {
+  border: 2px solid #c85000;
+  color: #c85000;
+  /* Text color change */
+  box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+  transform: translateY(0);
+}
+
+
+.button-5:hover,
+.button-5:focus {
+  background-color: #fb8332;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.button-5:active {
+  background-color: #c85000;
+  box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+  transform: translateY(0);
+}
+
+.center-text{
+  text-align: center;
+}
+
+.input-field {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 250px;
+}
+
+.case-study {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.step {
+  text-align: center;
+  padding: 0px;
+  max-width: 150px;
+}
+
+.step-img{
+  height: 100px;
+  width: 100px;
+  margin-bottom: 5px;
+}

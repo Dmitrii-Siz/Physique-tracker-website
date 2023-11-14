@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Register for <%=shopName%>
+  </title>
+  <link rel="stylesheet" type="text/css" href="main.css" />
+</head>
+
+<body>
+  <h1 class="center-text">Register for <%=shopName%>
+  </h1>
+  <div class="welcome_window">
+    <form method="POST" action="/registered">
+      <p>First name: <input class="input-field" id="first" type="text" name="first" value="" /></p>
+      <p>Last name: <input class="input-field" id="last" type="text" name="last" value="" /></p>
+      <p>Username: <input class="input-field" id="username" type="text" name="username" value="" /></p>
+      <p>Email: <input class="input-field" id="email" type="email" name="email" value="" /></p>
+      <p>Password: <input class="input-field" id="password" type="password" name="password" value="" /></p>
+      <input class="button-5" type="submit" value="Register" />
+    </form>
+  </div>
+</body>
+
+</html>
