@@ -21,3 +21,9 @@ CREATE TABLE foods (
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+Create TABLE progress(
+    date_uploaded VARCHAR(100) NOT NULL,
+    path_to VARCHAR(100) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);

@@ -10,14 +10,17 @@ module.exports = function(app, shopData) {
     //sanitise:
     app.use(expressSanitizer());
 
+    //API:
+    const request = require('request');
 
 
-    //redirect to the login part:
+    //redirect to the login part if the user isnt signed in:
     const redirectLogin = (req, res, next) => {
         if (!req.session.userId ) {
           res.redirect('./login')
         } else { next (); }
     }
+    
 
     //logout:
     app.get('/logout', redirectLogin, (req,res) => {
@@ -34,27 +37,10 @@ module.exports = function(app, shopData) {
     app.get('/',function(req,res){
         res.render('index.ejs', shopData)
     });
-    app.get('/about',function(req,res){
-        res.render('about.ejs', shopData);
-    });
 
-    app.get('/search',function(req,res){
-        res.render("search.ejs", shopData);
+    app.get('/profile',redirectLogin,function(req,res){
+        res.render("profile.ejs", shopData);
     });
-
-    //get and display the search-result
-    app.get('/search-result', function (req,res) {
-        let sqlquery = 
-        "SELECT * FROM books WHERE name like '%" + req.query.keyword + "%'"; 
-        db.query(sqlquery, (err, result) => {
-            if (err) {res.send('Error');}
-        //merges shopdata with new Available books:result
-        let newData = Object.assign({}, shopData, {availableBooks:result});
-        console.log(newData)
-        //renders the page
-        res.render("searchRes.ejs", newData)
-        });
-    })
 
     app.get('/register', function (req,res) {
         res.render('register.ejs', shopData);                                                                     
@@ -96,60 +82,16 @@ module.exports = function(app, shopData) {
     }
     });
 
-    //track your physique:
-    app.get('/track_physique', function(req,res){
+    //track your physique page:
+    app.get('/track_physique',redirectLogin, function(req,res){
         res.render('track_physique.ejs', shopData)
     });
 
-    //add bargain books page
-    app.get('/bargainbooks', function (req,res) {
-        let sqlquery = "SELECT * FROM books"; 
-        db.query(sqlquery, (err, result) => {
-        if (err) {res.redirect('./');}
-        //merges shopdata with new Available books:result
-        let newData = Object.assign({}, shopData, {availableBooks:result});
-        //console.log(newData)
-        res.render("bargainbooks.ejs", newData)   
-        });                                                          
+    //manage calories page:
+    app.get('/manage_calories',redirectLogin, function(req,res){
+        res.render('manage_calories.ejs', shopData)
     });
 
-    //bookadded add a new book
-    app.post('/bookadded', function (req,res) {
-    // saving data in database
-        let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)";
-        // execute sql query
-        let newrecord = [req.body.name, req.body.price];
-        db.query(sqlquery, newrecord, (err, result) => {
-        if (err) {return console.error(err.message);}
-        else
-        res.send(' This book is added to database, name: '+ req.body.name
-        + ' price '+ req.body.price);
-        });
-    });
-
-    //adds a new route to display all books:
-    app.get('/list',redirectLogin, function (req,res) {
-        let sqlquery = "SELECT * FROM books"; 
-        db.query(sqlquery, (err, result) => {
-        if (err) {res.redirect('./');}
-        //merges shopdata with new Available books:result
-        let newData = Object.assign({}, shopData, {availableBooks:result});
-        console.log(newData)
-        res.render("list.ejs", newData)   
-        });                                                          
-    });
-
-    //new route to display all the users
-    app.get('/listusers',redirectLogin, function (req,res) {
-        let sqlquery = "SELECT * FROM users"; 
-        db.query(sqlquery, (err, result) => {
-        if (err) {res.redirect('./');}
-            //merges:
-            let newData = Object.assign({}, shopData, {users:result});
-            console.log(newData)
-            res.render("listusers.ejs", newData)   
-        });                                                          
-    });
 
     //login page backend:
     app.get('/login', function (req,res) {

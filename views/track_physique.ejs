@@ -6,3 +6,22 @@
     </title>
     <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
+
+<body class="center-text">
+    <!-- import navbar -->
+    <%- include('navbar') %>
+
+        <h1>Track My Physique</h1>
+
+        <div class="track_page">
+            <a href="view_progress">
+                <button class="button-5" role="button">View My Progress</button>
+            </a>
+            <form action="/home/profile" method="post" encType="multipart/form-data">
+                <label>Upload Video/Image</label>
+                <input class="chooseFile" type="file" name="videoFile" accept="image/*,video/*" />
+                <input type="submit" class="register-button-5" value="Upload">
+            </form>
+        </div>
+
+</body>

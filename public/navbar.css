@@ -1,0 +1,25 @@
+/*navbar*/
+.navbar {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: white;
+    overflow: hidden;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+/*navbar link*/
+.navbar a {
+    font-size: 30px;
+    font-weight: bold;
+    float: left;
+    display: block;
+    color: #32AAFB;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    color: #0b75bc;
+}
