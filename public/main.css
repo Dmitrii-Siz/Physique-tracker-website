@@ -115,27 +115,39 @@ p,li {
   padding-top: 30px;
 }
 
-/*case study */
+/* Case study */
 .step {
   text-align: center;
-  padding: 0px;
+  padding: 10px;
+  /* Add some padding */
   max-width: 150px;
   cursor: pointer;
+  transition: transform 0.3s;
 }
 
-.step h3{
+.step h2 {
+  font-size: 24px;
+  /* Adjust font size */
   color: #0066cc;
 }
-.step p{
+
+.step h3 {
+  font-size: 18px;
+  /* Adjust font size */
+  color: #0066cc;
+}
+
+.step p {
   color: #333;
+  margin-bottom: 10px;
+  /* Add some margin */
 }
 
-.step:hover .text-overlay{
+.step:hover .text-overlay {
   transform: translateY(0);
-  visibility: visible;
 }
 
-.step-img{
+.step-img {
   margin-bottom: 5px;
 }
 
@@ -146,9 +158,34 @@ p,li {
   transition: transform 0.3s;
 }
 
-/* track physique page: */
-.track_page{
+.text-overlay p {
+  font-size: 10px;
+  color: #777;
+}
+
+
+/*navbar*/
+.navbar {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: white;
+  overflow: hidden;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+/*navbar link*/
+.navbar a {
+  font-size: 30px;
+  font-weight: bold;
+  float: left;
   display: block;
-  justify-content: center;
-  align-content: center;
+  color: #32AAFB;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  color: #0b75bc;
 }

@@ -2,20 +2,28 @@
 <html>
 
 <head>
-    <title>Login for <%=shopName%>
+    <!-- redefine the variables: -->
+    <title>Login for <%= shopData.shopName %>
     </title>
-    <link rel="stylesheet" type="text/css" href="main.css" />
+    <link rel="stylesheet" type="text/css" href="login.css" />
 </head>
 
 <body>
-    <h1 class="center-text">Sign into your account at <%=shopName%>
+    <h1>Sign into your account at <%= shopData.shopName %>
     </h1>
     <div class="welcome_window">
-        <form method="POST" action="/loggedin">
-            <p>Username: <input class="input-field" id="username" type="text" name="username" value="" /></p>
-            <p>Password: <input class="input-field" id="password" type="password" name="password" value="" /></p>
-            <input class="button-5" type="submit" value="Login" />
-        </form>
+        <% if (errorMessage !==null && errorMessage !==undefined) { %>
+            <p class="error-message">
+                <%= errorMessage %>
+            </p>
+            <% } %>
+                <form method="POST" action="/loggedin">
+                    <p>Username: <input class="input-field" id="username" type="text" name="username" value="" /></p>
+                    <p>Password: <input class="input-field" id="password" type="password" name="password" value="" />
+                    </p>
+                    <input class="button-5" type="submit" value="Login" />
+                </form>
+                <a href="register"><button class="register-button-5" role="button">Create a new account</button></a>
     </div>
 </body>
 
