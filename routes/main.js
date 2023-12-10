@@ -89,7 +89,7 @@ module.exports = function(app, shopData) {
                 result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword;
                 return res.send(result);
                 }
-            });
+            }); 
             })
         }
     });
@@ -99,10 +99,106 @@ module.exports = function(app, shopData) {
         res.render('track_physique.ejs', shopData)
     });
 
-    //manage calories page:
-    app.get('/manage_calories',redirectLogin, function(req,res){
-        res.render('manage_calories.ejs', shopData)
+    //manage calories page default:
+    app.get('/manage_calories', redirectLogin, function (req, res) {
+        res.render('manage_calories.ejs', { shopData, food_array: [], customFoods, totalCalories });
     });
+
+
+    //Total Calories glob varaibles:
+    let customFoods = [];//stores foods
+    let totalCalories = 0; //total
+    // Handle form submission for adding custom food
+    app.post('/add-custom-food', (req, res) => {
+        const { customFoodName, calories } = req.body;
+        // Add the custom food item to the array
+        customFoods.push({
+            customFoodName,
+            calories: calories,
+        });
+        totalCalories = parseInt(totalCalories)+parseInt(calories);// Update the total calories
+        res.render('manage_calories.ejs', { shopData, food_array: [], customFoods, totalCalories });// Render the page
+    });
+
+    // Handle removal of custom food item
+    app.post('/remove-custom-food/:customFoodName', (req, res) => {
+        const { customFoodName } = req.params;
+        const method = req.body._method || req.query._method;// Check if the _method parameter is present
+        // Check if the request is a DELETE
+        if (method === 'DELETE') {
+            const index = customFoods.findIndex(item => item.customFoodName === customFoodName);// Find the index
+            if (index !== -1) {
+                totalCalories -= customFoods[index].calories;//subtract from total
+                customFoods.splice(index, 1);// Remove from array
+            }
+            // Render the page
+            return res.render('manage_calories.ejs', { shopData, food_array: [], customFoods, totalCalories });
+        }
+        // Method is something else display this error:
+        res.status(405).send('Error!');
+    });
+
+
+
+    //manage calories api:
+    app.get('/search-calories', (req, res) => {
+        const foodName = req.query.foodName;
+        // keys:
+        const appId = '1c372e6a';
+        const appKey = '3387bd7662b53c67390eb9a7113c32cd';
+        //API to pull from:
+        const apiUrl = `https://trackapi.nutritionix.com/v2/search/instant/?query=${encodeURIComponent(foodName)}`;
+
+        //Send the API request:
+        request(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-app-id': appId,
+                'x-app-key': appKey,
+            },
+        }, (error, response, body) => {
+            if (error) {
+                console.error('Error fetching data:', error);
+                res.status(500).send('Internal Error');
+                return;
+            }
+
+            const data = JSON.parse(body);//process the response
+            const food_array = extractCalories(data);// Extract calories from the response data
+
+            // Render the page with the data:
+            res.render('manage_calories.ejs', { shopData, food_array, customFoods, totalCalories });
+        });
+    });
+
+    // process the data from the API:
+    function extractCalories(data) {
+        const food_array = [];
+        // check that the data isnt empty:
+        if (typeof data === 'object' && data !== null) {
+            //loop through the objects:
+            Object.keys(data).forEach(category => {
+                // Check if the category has an array with items
+                if (Array.isArray(data[category])) {
+                    data[category].forEach(item => {
+                        // Check if the item has both food_name and nf_calories (prevents errors)
+                        if (item.food_name && item.nf_calories) {
+                            // Create a new object with food name and calories
+                            const foodObject = {
+                                foodName: item.food_name,
+                                calories: item.nf_calories
+                            };
+                            // Push the object to the food_array
+                            food_array.push(foodObject);
+                        }
+                    });
+                }
+            });
+        }
+        // Return the array containing food names and calories
+        return food_array.length > 0 ? food_array : null;
+    }
 
     //view progress page:
     app.get('/loggedin',redirectLogin, function(req,res){
@@ -121,47 +217,53 @@ module.exports = function(app, shopData) {
         next ();
     });
 
-    app.post('/loggedin', function (req,res) {
-        //bcrypt stuff
+    app.post('/loggedin', function (req, res) {
         const bcrypt = require('bcrypt');
-
         const username = req.body.username;
-        let hashedPassword;
 
-        //sql query:
-        let sqlquery = `SELECT hashedPassword FROM users WHERE username='${username}'`;
-        
-        //get the username for the database and compare the passwords:
-        db.query(sqlquery, (err,response) =>{
-            if(err){
-                //error message displayed if the login/password is incorrect
-                res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });
-            }else{
-                //username found successfully:
-                hashedPassword = response[0].hashedPassword;
+        // SQL query:
+        let sqlquery = `SELECT hashedPassword FROM users WHERE username=?`;
 
-                console.log(hashedPassword)
-                // Compare the password supplied with the password in the database
-                 
-                bcrypt.compare(req.body.password, hashedPassword, function(err, result) {
-                    if (err) {
-                        //error:
-                        res.redirect('./');
-                    }
-                    else if (result == true) {
-                        //when login is successful redirect them to another page:
-                        req.session.userId = req.body.username;
+        if (username == "" || req.body.password == "") {
+            // user hasn't provided anything
+            res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });
+        } else {
+            // get the username from the database and compare the passwords:
+            db.query(sqlquery, [username], (err, response) => {
+                if (err) {
+                    // error message displayed if the login/password is incorrect
+                    res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });
+                } else {
+                    // Check if any records were found
+                    if (response && response.length > 0) {
+                        // username found successfully:
+                        let hashedPassword = response[0].hashedPassword;
 
-                        let username = req.body.username;
-                        res.render("loggedin.ejs", { username: username });
-                    }
-                    else {
-                        //error message displayed if the login/password is incorrect
+                        console.log(hashedPassword);
+                        // Compare the password supplied with the password in the database
+                        bcrypt.compare(req.body.password, hashedPassword, function (err, result) {
+                            if (err) {
+                                // error:
+                                console.error("Error comparing passwords:", err);
+                                res.render("login.ejs", { shopData, errorMessage: "An error occurred during login" });
+                            } else if (result == true) {
+                                // when login is successful redirect them to another page:
+                                req.session.userId = req.body.username;
+                                let username = req.body.username;
+                                res.render("loggedin.ejs", { username: username });
+                            } else {
+                                // error message displayed if the login/password is incorrect
+                                res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });
+                            }
+                        });
+                    } else {
+                        // No user found with the given username
                         res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     });
+
     
 }

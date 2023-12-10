@@ -5,3 +5,11 @@
     align-content: center;
 }
 
+.home_page {
+    font-family: fantasy;
+    font-size: 40px;
+    letter-spacing: 0.1cm;
+    color: #fa6400;
+    text-align: center;
+}
+

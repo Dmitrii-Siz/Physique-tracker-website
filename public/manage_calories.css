@@ -1,0 +1,120 @@
+/* button styling */ .button-5 {
+    align-items: center;
+    background-clip: padding-box;
+    border: 1px solid transparent;
+    background-color: #fa6400;
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    transition: all 250ms;
+    width: auto;
+}
+
+/* title styling */
+.home_page {
+    font-family: fantasy;
+    font-size: 40px;
+    letter-spacing: 0.1cm;
+    color: #fa6400;
+    text-align: center;
+}
+
+/* Button hover and focus styles */
+.button-5:hover,
+.button-5:focus {
+    background-color: #fb8332;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.button-5:active {
+    background-color: #c85000;
+    box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+    transform: translateY(0);
+}
+
+/* register button */
+.register-button-5 {
+    align-items: center;
+    background-color: transparent;
+    border: 2px solid #fa6400;
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: #fa6400;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    transition: all 250ms;
+    width: auto;
+}
+
+/* Register button hover and focus styles */
+.register-button-5:hover,
+.register-button-5:focus {
+    border: 2px solid #fb8332;
+    color: #fb8332;
+    /* Text color change */
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.register-button-5:hover,
+.button-5:hover {
+    transform: translateY(-1px);
+}
+
+.register-button-5:active {
+    border: 2px solid #c85000;
+    color: #c85000;
+    /* Text color change */
+    box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+    transform: translateY(0);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+    border-radius: 8px;
+
+}
+
+/* Form styles */
+form {
+    margin-bottom: 20px;
+}
+
+/* label styling */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+/* input field style */
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ced4da;
+    /* Set your desired border color */
+    border-radius: 4px;
+    box-sizing: border-box;
+}

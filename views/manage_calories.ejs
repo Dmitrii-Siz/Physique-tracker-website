@@ -2,14 +2,72 @@
 <html>
 
 <head>
-    <title>Manage Calories
-    </title>
-    <link rel="stylesheet" type="text/css" href="main.css" />
+    <title>Manage Calories</title>
+    <link rel="stylesheet" type="text/css" href="manage_calories.css" />
 </head>
 
 <body>
     <!-- import navbar -->
-    <%- include('navbar') %>
+    <div>
+        <%- include('navbar') %>
+    </div>
 
+    <div class="container">
+        <div>
+            <h1 class="home_page">Calculate Today's Calories</h1>
+            <br><br>
+            <div>
+                <% if (food_array && food_array.length> 0) { %>
+                    <!-- Display the retrieved food names and calories -->
+                    <ul>
+                        <% food_array.forEach(foodItem=> { %>
+                            <li>
+                                <%= foodItem.foodName %>: <%= foodItem.calories %> kcal
+                            </li>
+                            <% }); %>
+                    </ul>
+                    <% } else { %>
+                        <!-- Display a message if no calories have been searched yet -->
+                        <p>No calories searched yet.</p>
+                        <% } %>
+            </div>
 
+            <!-- Form for finding calories for a specific food -->
+            <form id="searchForm" action="/search-calories" method="GET">
+                <label>Find the calories:</label>
+                <input type="text" name="foodName" placeholder="Enter food name">
+                <button class="button-5" type="submit">Search</button>
+            </form>
+            <br><br>
+
+            <div class="displayTotal">
+                <label for="total">Total Calories:</label>
+                <p>
+                    <%= totalCalories %>
+                </p>
+                <ul>
+                    <% customFoods.forEach(foodItem=> { %>
+                        <li>
+                            <%= foodItem.customFoodName %>: <%= foodItem.calories %> kcal
+                                    <form action="/remove-custom-food/<%= foodItem.customFoodName %>" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button class="remove-button" type="submit">Remove</button>
+                                    </form>
+                        </li>
+                        <% }); %>
+                </ul>
+            </div>
+            <!-- Form for entering your own food -->
+            <form id="addForm" action="/add-custom-food" method="POST">
+                <label>Add Calories to the Total:</label>
+                <input type="text" name="customFoodName" placeholder="Enter food name">
+                <label>Number of calories</label>
+                <input type="number" name="calories" placeholder="Enter calories">
+                <button class="register-button-5" type="submit">Add Food</button>
+            </form>
+
+        </div>
+    </div>
 </body>
+
+</html>
