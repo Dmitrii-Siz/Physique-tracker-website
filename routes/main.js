@@ -99,6 +99,10 @@ module.exports = function(app, shopData) {
         }
     });
 
+    app.get('/about',function(req,res){
+        res.render('about.ejs', shopData)
+    });
+
 
     //function to get the type of file that is being passed in:
     function yesVideo(filePath) {

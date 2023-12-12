@@ -1,28 +1,51 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <title>About <%=shopName%>
-  </title>
-  <link rel="stylesheet" type="text/css" href="main.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About <%=shopName%>
+    </title>
+    <link rel="stylesheet" href="about.css">
 </head>
 
-<body class="center-text">
-  <h1>About <%=shopName%>
-  </h1>
-  <p>You can keep track of your physique by uploading a picture/video every week</p>
-  <p>Your images/videos will be safely stored and only you will be able to access it</p>
-  <!--Login and Register page-->
-  <p>
-    <a href="login">
-      <button class="button-5" role="button">Sign into your account</button>
-    </a>
-  </p>
-  <p>
-    <a href="register">
-      <button class="register-button-5" role="button">Create a new account</button>
-    </a>
-  </p>
+<body>
+    <!-- Import navbar -->
+    <%- include('navbar') %>
+
+        <div class="about-container">
+            <h1 class="home_page">About <%=shopName%>
+            </h1>
+
+            <div class="motivation-section">
+                <h4>Struggling with Gym Motivation?</h4>
+                <p>It's challenging to stay motivated when progress is hard to see on a day-to-day basis. The truth is,
+                    your
+                    body transforms over consistency and time.</p>
+                <p>Physique Tracker is here to guide you through your fitness journey.</p>
+            </div>
+
+            <div class="monitoring-section">
+                <h4>Monitor Your Progress</h4>
+                <p>Physique Tracker provides you with a simple and effective way to track your physique over weeks.</p>
+                <p>Upload weekly images of your physique to stay motivated and witness your body's changes over time.
+                </p>
+                <p>Backtrack after several weeks to view your progress and celebrate how far you've come.</p>
+            </div>
+
+            <div class="calorie-section">
+                <h4>Calorie Monitoring Made Easy</h4>
+                <p>Physique Tracker helps you monitor your calories. Unsure about the calorie content of a meal item?
+                    Use our
+                    partnered API to quickly find the information you need.</p>
+            </div>
+
+            <div class="solution-section">
+                <h4>Simple Yet Effective Solution</h4>
+                <p>Physique Tracker offers a straightforward solution to monitor your progress and achieve your fitness
+                    goals!</p>
+            </div>
+        </div>
 </body>
 
 </html>
