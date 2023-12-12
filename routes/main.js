@@ -89,9 +89,10 @@ module.exports = function(app, shopData) {
                     return res.render('register.ejs', { shopData, errorMessage: 'There seems to be an error with our system, please try again later' });
                 } else {
                 // Data inserted successfully:
-                result = 'Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
-                result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword;
-                return res.send(result);
+                    // result = 'Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
+                    // result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword;
+                    req.session.userId = req.body.username;
+                    return res.redirect('/');
                 }
             }); 
             })

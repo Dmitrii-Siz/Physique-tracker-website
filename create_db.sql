@@ -13,15 +13,7 @@ CREATE TABLE users (
     hashedPassword VARCHAR(128) NOT NULL
 );
 
--- SQL code to create the food's table:
-CREATE TABLE foods (
-    food_id INT AUTO_INCREMENT PRIMARY KEY,
-    food_name VARCHAR(100) NOT NULL,
-    calories INT NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-
+--SQL for the progress table:
 CREATE TABLE progress (
     progress_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
@@ -29,3 +21,14 @@ CREATE TABLE progress (
     path_to VARCHAR(1000) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+
+--Testing SQL for the progress table:
+INSERT INTO progress (user_id, date_uploaded, path_to)
+VALUES (1, '2023-11-21', '123123132test_img_1.jpg');
+INSERT INTO progress (user_id, date_uploaded, path_to)
+VALUES (1, '2023-11-28', '12312321test_img_2.jpg');
+INSERT INTO progress (user_id, date_uploaded, path_to)
+VALUES (1, '2023-12-5', '90412474test_img_3.jpg');
+INSERT INTO progress (user_id, date_uploaded, path_to)
+VALUES (1, '2023-12-12', '1702402268734_31231321test_img_4.jpg');
