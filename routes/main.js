@@ -253,16 +253,15 @@ module.exports = function(app, shopData) {
 
 
 
-
+    //Total Calories glob varaibles:
+    let customFoods = [];//stores foods
+    let totalCalories = 0; //total
+    let food_array = [];//api search result
     //manage calories page default:
     app.get('/manage_calories', redirectLogin, function (req, res) {
         res.render('manage_calories.ejs', { shopData, food_array: [], customFoods, totalCalories });
     });
-
-
-    //Total Calories glob varaibles:
-    let customFoods = [];//stores foods
-    let totalCalories = 0; //total
+    
     // Handle form submission for adding custom food
     app.post('/add-custom-food', (req, res) => {
         const { customFoodName, calories } = req.body;
@@ -287,7 +286,7 @@ module.exports = function(app, shopData) {
                 customFoods.splice(index, 1);// Remove from array
             }
             // Render the page
-            return res.render('manage_calories.ejs', { shopData, food_array: [], customFoods, totalCalories });
+            return res.redirect('/manage_calories',);
         }
         // Method is something else display this error:
         res.status(405).send('Error!');
@@ -320,7 +319,7 @@ module.exports = function(app, shopData) {
             }
 
             const data = JSON.parse(body);//process the response
-            const food_array = extractCalories(data);// Extract calories from the response data
+            food_array = extractCalories(data);// Extract calories from the response data
 
             // Render the page with the data:
             res.render('manage_calories.ejs', { shopData, food_array, customFoods, totalCalories });
