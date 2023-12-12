@@ -5,6 +5,7 @@
     align-content: center;
 }
 
+/* h1 styling: */
 .home_page {
     font-family: fantasy;
     font-size: 40px;
@@ -13,3 +14,70 @@
     text-align: center;
 }
 
+/* Center the content on the page */
+.center-text {
+    text-align: center;
+}
+
+/* Style the track_page container */
+.track_page {
+    margin-top: 20px;
+}
+
+/* Style the image */
+img {
+    max-width: 500px;
+    max-height: 500px;
+    margin-top: 10px;
+}
+
+/* Style the error message */
+.error-message {
+    color: #FF0000;
+    /* Red color for error messages */
+}
+
+/* Style the file input and upload button */
+.chooseFile {
+    margin-top: 10px;
+}
+
+/* button styling */
+.register-button-5 {
+    align-items: center;
+    background-color: transparent;
+    border: 2px solid #fa6400;
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: #fa6400;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    transition: all 250ms;
+    width: auto;
+    margin-top: 15px;
+}
+
+/* Button hover and focus styles */
+.register-button-5:hover,
+.register-button-5:focus {
+    border: 2px solid #fb8332;
+    color: #fb8332;
+    /* Text color change */
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.register-button-5:active {
+    border: 2px solid #c85000;
+    color: #c85000;
+    /* Text color change */
+    box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+    transform: translateY(0);
+}

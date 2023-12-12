@@ -12,7 +12,7 @@ const app = express()
 const port = 8000
 app.use(bodyParser.urlencoded({ extended: true }))
 
-//App use:
+
 // Create a session
 app.use(session({
     secret: 'somerandomstuff',

@@ -2,8 +2,7 @@
 <html>
 
 <head>
-    <title>Track Physique
-    </title>
+    <title>Track Physique</title>
     <link rel="stylesheet" type="text/css" href="track_physique.css" />
 </head>
 
@@ -12,16 +11,36 @@
     <%- include('navbar') %>
 
         <h1 class="home_page">Track My Physique</h1>
-
         <div class="track_page">
-            <a href="loggedin">
-                <button class="button-5" role="button">View My Progress</button>
-            </a>
-            <form action="/home/profile" method="post" encType="multipart/form-data">
-                <label>Upload Video/Image</label>
-                <input class="chooseFile" type="file" name="videoFile" accept="image/*,video/*" />
-                <input type="submit" class="register-button-5" value="Upload">
-            </form>
+            <% if (hasFile) { %>
+                <!-- If the user has an image - show delete option -->
+                <p>You already have a physique image for this week:</p>
+                <% if (error) { %>
+                    <p class="error-message">
+                        <%= error %>
+                    </p>
+                    <% } %>
+                        <!-- display the image onto the screen: -->
+                        <img src="/uploads/<%= imagePath %>" alt="Physique Image"
+                            style="max-width: 500px; max-height: 500px;">
+                        <form action="/remove-physique" method="post" enctype="multipart/form-data">
+                            <input type="submit" class="register-button-5" value="Remove">
+                        </form>
+                        <% } else { %>
+                            <!-- If the user doesn't have an image - show the upload form -->
+                            <p>Our system only supports image files (sorry for causing any inconvenience)</p>
+                            <form action="/track_physique" method="post" enctype="multipart/form-data">
+                                <label>Upload Image</label>
+                                <input class="chooseFile" type="file" name="imageFile" accept="image/*" />
+                                <input type="submit" class="register-button-5" value="Upload">
+                            </form>
+                            <% if (error) { %>
+                                <p class="error-message">
+                                    <%= error %>
+                                </p>
+                                <% } %>
+                                    <% } %>
         </div>
-
 </body>
+
+</html>

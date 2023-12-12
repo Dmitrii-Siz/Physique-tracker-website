@@ -98,8 +98,8 @@ p,li {
 .center-text{
   text-align: center;
   color: #fa6400;
+  margin: 20px;
 }
-
 .input-field {
   padding: 8px;
   margin: 5px;
@@ -163,7 +163,7 @@ p,li {
   color: #777;
 }
 
-
+/* Loggedin styling: */
 /*navbar*/
 .navbar {
   display: flex;
@@ -189,4 +189,22 @@ p,li {
 
 .navbar a:hover {
   color: #0b75bc;
+}
+
+/* calendar styling: */
+.calendar-entry {
+  display: flex;
+  justify-content: space-evenly;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  align-items: center;
+}
+.calendar-date {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.calendar-image img {
+  max-width: 200px;
+  max-height: 200px;
 }

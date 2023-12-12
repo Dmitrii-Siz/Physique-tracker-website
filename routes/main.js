@@ -1,36 +1,40 @@
 module.exports = function(app, shopData) {
-
     //validator:
     const { check, validationResult } = require('express-validator');
 
     //sanitiser
     const expressSanitizer = require('express-sanitizer');
 
-
     //sanitise:
     app.use(expressSanitizer());
+
+    //file upload library and paths:
+    let path = require('path');
+    var fileUpload = require('express-fileupload');
+    app.use(fileUpload());
+    const fs = require('fs')
 
     //API:
     const request = require('request');
 
-
     //redirect to the login part if the user isnt signed in:
     const redirectLogin = (req, res, next) => {
         if (!req.session.userId ) {
-          res.redirect('./login')
+          res.redirect('/login')
         } else { next (); }
     }
     
 
     //logout:
-     app.get('/logout', redirectLogin, (req,res) => {
-         req.session.destroy(err => {
-         if (err) {
-           return res.redirect('./')
-         }
+    app.get('/logout', redirectLogin, (req, res) => {
+        req.session.destroy(err => {
+            if (err) {
+                return res.redirect('/');
+            }
             res.redirect('/');
-         })
-    })
+        });
+    });
+
 
     // Handle our routes
     app.get('/',function(req,res){
@@ -94,10 +98,156 @@ module.exports = function(app, shopData) {
         }
     });
 
-    //track your physique page:
-    app.get('/track_physique',redirectLogin, function(req,res){
-        res.render('track_physique.ejs', shopData)
+
+    //function to get the type of file that is being passed in:
+    function yesVideo(filePath) {
+        let videoExtensions = ['.mp4', '.avi', '.mov'];
+        let ext = path.extname(filePath).toLowerCase();
+        return videoExtensions.includes(ext);
+    }
+
+    function findClosestDate(result){
+        let todaysDate = new Date();
+        let closestDate = null;
+        let minDiff  = Infinity;
+        // Find the closest date
+        for (const row of result) {
+            // Convert the date_uploaded from the row to a Date object
+            let uploadedDate = new Date(row.date_uploaded);
+            // Calculate the difference in days
+            let diff = Math.abs((todaysDate - uploadedDate) / (1000 * 60 * 60 * 24));
+            // Check if this date is closer than the current closest date
+            if (diff < minDiff) {
+                closestDate = row;
+                minDiff = diff;
+            }
+        }
+        return [closestDate,minDiff];
+    };
+
+    //track your physique page get request:
+    app.get('/track_physique', redirectLogin, function(req, res) {
+        let userId = req.session.userId;
+        let sqlquery = "SELECT * FROM progress WHERE user_id = (SELECT user_id FROM users WHERE username = ?)";//query to check the userID
+
+        db.query(sqlquery, [userId], (err, result) => {
+            // SQL query error:
+            if (err) {
+                return res.status(500).send('Database Error when searching for the user');
+            }
+            // If the user has a physique image, render the page with the option to update it
+            if (result.length > 0) { 
+                [closestDate, minDiff]= findClosestDate(result)
+                //if it hasn't been a week yet:
+                if(minDiff < 7){
+                    let imagePath = closestDate.path_to;
+                    return res.render('track_physique.ejs', { shopData, hasFile: true, imagePath, error:null});
+                }
+                //has been longer than a week:
+                else{
+                    return res.render('track_physique.ejs', { shopData, hasFile: false, error:null });
+                }
+            } else {
+                //user doesn't have an image on their profile at all:
+                return res.render('track_physique.ejs', { shopData, hasFile: false, error:null });
+            }
+        });
     });
+
+    //remove the image from the database:'
+    app.post('/remove-physique', redirectLogin, function(req, res){
+        let username = req.session.userId;
+        let sqlquery = "SELECT * FROM progress WHERE user_id = (SELECT user_id FROM users WHERE username = ?)";//query to check the userID and return the stuff from progress table
+
+         db.query(sqlquery, [username], (err, result) => {
+            if (err) {
+                return res.status(500).send('Database Error when searching for the user');
+            }
+            else if(result.length === 0){
+                return res.status(404).send('User not found OR Nothing to remove');
+            }
+            else{
+                //find closest date and minDiff:
+                [closestDate, minDiff] = findClosestDate(result);
+                //remove it:
+                let sqlquery = "DELETE FROM progress WHERE progress_id = ?";
+                db.query(sqlquery, [closestDate.progress_id], (err,result) =>{
+                    //errror:
+                    if(err){
+                        return res.status(500).send("Database Error when removing the Image")
+                    }
+                    else{
+                        //if the deletion process was succesful:
+                        return res.render('track_physique.ejs', { shopData, hasFile: false, error:null});
+                    }
+                })
+            }
+         });         
+    });
+
+    //physique tracker image upload method:
+    app.post('/track_physique', redirectLogin, function(req, res){
+        let userId = req.session.userId; // userId
+        // generate the path to store the img/vid:
+        let uploadPath = path.resolve(__dirname, '..', 'public', 'uploads');
+        // Check if the directory exists, and create it if not
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        //find the userID
+        let sqlquery = "SELECT user_id FROM users WHERE username = ?";
+
+        db.query(sqlquery, [userId], (err, result) => {
+            if (err) {
+                return res.status(500).send('Database Error when searching for the user');
+            }
+            else if(result.length === 0){
+                return res.status(404).send('User not found');
+            }
+            //if the user is found:
+            else{
+                userId = result[0].user_id//store the userID
+
+                //current Img file path and name:
+                let imageFile = req.files.imageFile;
+                let newFileName = `${Date.now()}_${imageFile.name}`;
+                let newImagePath = path.join(uploadPath, newFileName);//store the img
+
+                //check if the user uploaded a video (NOT supported):
+                if(yesVideo(newImagePath)){
+                    return res.render('track_physique.ejs', { shopData, hasFile: false, error:"Unable to process your request, our system doesn't support videos"});
+                }
+
+                 // Get today's date: 
+                let currentDate = new Date();
+                let formattedDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
+                // Re-store the image file:
+                imageFile.mv(newImagePath, function(err) {
+                    if (err) {
+                        return res.status(500).send("There was a problem with storing your image file");
+                    }
+
+                    // Store the file in the database along with the current date and time:
+                    sqlquery = "INSERT INTO progress (user_id, date_uploaded, path_to) VALUES (?, ?, ?)";
+
+
+                    //store the img/vid:
+                    db.query(sqlquery, [userId, formattedDate, newFileName], (err, result) => {
+                        if (err) {
+                            return res.status(500).send("There was a problem with storing your image file");
+                        }
+                        // Render the page with the image uploaded
+                        res.render('track_physique.ejs', { shopData, hasFile: true, imagePath: newFileName, error:null });
+                    });
+                });
+            }
+        });
+    });
+
+
+
 
     //manage calories page default:
     app.get('/manage_calories', redirectLogin, function (req, res) {
@@ -202,7 +352,22 @@ module.exports = function(app, shopData) {
 
     //view progress page:
     app.get('/loggedin',redirectLogin, function(req,res){
-        res.render('loggedin.ejs', shopData)
+        let username = req.session.userId; // userId
+        //find the user and retrieve the the progress:
+        let sqlquery = "SELECT * FROM progress WHERE user_id = (SELECT user_id FROM users WHERE username = ?)"
+        db.query(sqlquery, [username], (err, result) => {
+            if(err){
+                return res.status(500).send('Database Error when searching for the user');
+            }
+            else{
+                resultsList = [];
+                for (let i = result.length - 1; i >= 0; i--) {
+                    resultsList.push({ date: result[i].date_uploaded,image_path: result[i].path_to});
+                }
+                
+                res.render("loggedin.ejs", { username: username, resultsList: resultsList });
+            }
+        });
     });
 
 
@@ -211,12 +376,7 @@ module.exports = function(app, shopData) {
         res.render('login.ejs', { shopData, errorMessage: null });                                                                  
     });
 
-
-    //logged in:
-    app.get('loggedin',redirectLogin,function(req,res){
-        next ();
-    });
-
+    //log in
     app.post('/loggedin', function (req, res) {
         const bcrypt = require('bcrypt');
         const username = req.body.username;
@@ -239,18 +399,32 @@ module.exports = function(app, shopData) {
                         // username found successfully:
                         let hashedPassword = response[0].hashedPassword;
 
-                        console.log(hashedPassword);
+                        //console.log(hashedPassword);
                         // Compare the password supplied with the password in the database
                         bcrypt.compare(req.body.password, hashedPassword, function (err, result) {
                             if (err) {
                                 // error:
-                                console.error("Error comparing passwords:", err);
                                 res.render("login.ejs", { shopData, errorMessage: "An error occurred during login" });
                             } else if (result == true) {
                                 // when login is successful redirect them to another page:
-                                req.session.userId = req.body.username;
                                 let username = req.body.username;
-                                res.render("loggedin.ejs", { username: username });
+
+                                //find the user and retrieve the the progress:
+                                let sqlquery = "SELECT * FROM progress WHERE user_id = (SELECT user_id FROM users WHERE username = ?)"
+                                db.query(sqlquery, [username], (err, result) => {
+                                    if(err){
+                                        return res.status(500).send('Database Error when searching for the user');
+                                    }
+                                    else{
+                                        // Save user session here, when login is successful
+                                        req.session.userId = req.body.username;
+                                        resultsList = [];
+                                        for (let i = result.length - 1; i >= 0; i--) {
+                                            resultsList.push({ date: result[i].date_uploaded,image_path: result[i].path_to});
+                                        }
+                                        res.render("loggedin.ejs", { username: username, resultsList: resultsList });
+                                    }
+                                });
                             } else {
                                 // error message displayed if the login/password is incorrect
                                 res.render("login.ejs", { shopData, errorMessage: "Incorrect username or password" });

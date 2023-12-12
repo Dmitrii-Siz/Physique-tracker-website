@@ -22,8 +22,10 @@ CREATE TABLE foods (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-Create TABLE progress(
+CREATE TABLE progress (
+    progress_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
     date_uploaded VARCHAR(100) NOT NULL,
-    path_to VARCHAR(100) NOT NULL,
+    path_to VARCHAR(1000) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

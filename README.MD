@@ -3,3 +3,7 @@ npm install express-validator
 npm install express-sanitizer
 
 npm install request
+
+npm install express-fileupload
+
+npm install express-session

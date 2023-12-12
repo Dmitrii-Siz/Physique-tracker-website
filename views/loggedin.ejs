@@ -2,8 +2,7 @@
 <html>
 
 <head>
-    <title>
-    </title>
+    <title>Calendar</title>
     <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
 
@@ -17,6 +16,21 @@
 
     <div class="center-text">
         <h1 class="home_page">Calendar:</h1>
+        <%if(resultsList.length==0){%>
+            <h2>Your progress is currently empty</h2>
+            <p>Click on Track Physique to change update it</p>
+            <% } %>
+                <% for (let i=0; i < resultsList.length; i++) { %>
+                    <div class="calendar-entry">
+                        <div class="calendar-date">
+                            <%= resultsList[i].date %>
+                        </div>
+                        <div class="calendar-image">
+                            <img src="/uploads/<%=resultsList[i].image_path%>" alt="Physique Image" />
+                        </div>
+                    </div>
+                    <% } %>
+
     </div>
 </body>
 
