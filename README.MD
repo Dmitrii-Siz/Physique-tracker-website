@@ -11,3 +11,5 @@ npm install express-session
 npm install bcrypt
 
 After adding the dependencies run the scripts in create_db.sql script (start with only running the create the tables scripts)
+
+Good to go
