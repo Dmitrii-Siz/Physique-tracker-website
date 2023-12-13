@@ -10,6 +10,10 @@ p,li {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.b{
+  color: #000;
+}
+
 /* Home Page: */
 .welcome_window {
   padding: 20px;
@@ -208,3 +212,10 @@ p,li {
   max-width: 200px;
   max-height: 200px;
 }
+/* api at the end styling */
+  .api {
+    text-align: center;
+  }
+  .api h3{
+    font-size: 24px;
+  }

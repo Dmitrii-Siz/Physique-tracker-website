@@ -17,9 +17,12 @@
 
     <div class="center-text">
         <h1 class="home_page">Calendar:</h1>
+        <h2>Hello & Welcome
+            <%=name%>,
+        </h2>
         <%if(resultsList.length==0){%>
             <h2>Your progress is currently empty</h2>
-            <p>Click on Track Physique to change update it</p>
+            <p class="b">Click on Track Physique to update it</p>
             <% } %>
                 <% for (let i=0; i < resultsList.length; i++) { %>
                     <div class="calendar-entry">
@@ -32,6 +35,13 @@
                     </div>
                     <% } %>
 
+    </div>
+    <div class="api">
+        <h3 class="center-text">Try out our new API url</h3>
+        <p class="b">The API provides you with a list of the top 50 female and male body builders</p>
+        <p class="b">Here is the url along with your pregenerated unique key</p>
+        <p class="b">/api/<%=keyId%>
+        </p>
     </div>
 </body>
 

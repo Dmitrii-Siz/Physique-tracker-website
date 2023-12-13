@@ -43,7 +43,21 @@ module.exports = function(app, shopData) {
 
     app.get('/register', function (req,res) {
         res.render('register.ejs', { shopData, errorMessage: null });                                                                    
-    });                                                                                                 
+    });                              
+    
+    //generates a random API key:
+    function generateRandomId(length) {
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomId = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomId += characters.charAt(randomIndex);
+        }
+
+        return randomId;
+    }
+
     app.post('/registered',[
         check('email').isEmail().normalizeEmail(),
         check('username').trim().escape()
@@ -62,35 +76,39 @@ module.exports = function(app, shopData) {
         const first = req.sanitize(req.body.first)//validates the first name
         const last = req.sanitize(req.body.last)//validates the last name
         const email = req.sanitize(req.body.email)//sanitises email
-        const username = req.sanitize(req.body.username)//sanitises username
+        const username = req.sanitize(req.body.username)//sanitises username        
+
+        //create the unique api:
+        let uniqueId = generateRandomId(Math.floor(Math.random() * (32 - 16 + 1)) + 16);
 
         // Check if the username already exists in the database
-        let sqlquery = `SELECT * FROM users WHERE username = ?`;
-
+        let sqlquery = "SELECT * FROM users WHERE username = ?";
         // username already exists?
-        db.query(sqlquery, [username], (err, result) => {
+        db.query(sqlquery, [username], (err, result) => {           
             if (err) {
                 // Handle the database error, for example, redirect to the registration page with an error message.
                 return res.render('register.ejs', { shopData, errorMessage: 'There seems to be an error with our system, please try again later' });
-            }
+            } 
             if (result.length > 0) {
                 // Username already exists
                 return res.render('register.ejs', { shopData, errorMessage: 'Sorry, username already exists' });
             }
+ 
         });
+
 
         bcrypt.hash(plainPassword, saltRounds).then(hashedPassword => {
             // Construct the SQL query after password hashing is complete
-            let sqlquery = `INSERT INTO users (username, first_name, last_name, email, hashedPassword) VALUES (?, ?, ?, ?, ?)`;
+            let sqlquery = `INSERT INTO users (username, first_name, last_name, email, hashedPassword, keyId) VALUES (?, ?, ?, ?, ?, ?)`;
 
             // Execute the query and handle the result
-            db.query(sqlquery, [username, first, last, email, hashedPassword], (err, result) => {
+            db.query(sqlquery, [username, first, last, email, hashedPassword, uniqueId], (err, result) => {
                 if (err) {
-                    return res.render('register.ejs', { shopData, errorMessage: 'There seems to be an error with our system, please try again later' });
+                    return res.render('register.ejs', { shopData, errorMessage: 'Oops, something went wrong' });
                 } else {
-                // Data inserted successfully:
+                    // Data inserted successfully:
                     // result = 'Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
-                    // result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword;
+                    // result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword
                     req.session.userId = req.body.username;
                     return res.redirect('/');
                 }
@@ -215,7 +233,7 @@ module.exports = function(app, shopData) {
                 userId = result[0].user_id//store the userID
 
                 //current Img file path and name:
-                let imageFile = req.files.imageFile;
+                let imageFile = req.sanitize(req.files.imageFile);
                 let newFileName = `${Date.now()}_${imageFile.name}`;
                 let newImagePath = path.join(uploadPath, newFileName);//store the img
 
@@ -276,7 +294,7 @@ module.exports = function(app, shopData) {
 
     // Handle removal of custom food item
     app.post('/remove-custom-food/:customFoodName', (req, res) => {
-        const { customFoodName } = req.params;
+        const { customFoodName } = req.sanitize(req.params.customFoodName);
         const method = req.body._method || req.query._method;// Check if the _method parameter is present
         // Check if the request is a DELETE
         if (method === 'DELETE') {
@@ -293,10 +311,38 @@ module.exports = function(app, shopData) {
     });
 
 
+    //famous bb api:
+    app.get('/api/:keyId', (req,res) => {
+        let keyId = req.sanitize(req.params.keyId);//url key sanitised
+        let sqlquery = "SELECT * from users where keyId = ?";//sql query
+
+        db.query(sqlquery,[keyId], (err, result) => {
+            if(err){
+                return res.status(500).send('Database issue');
+            }
+            else if(result[0].length < 1){
+                return res.status(500).send("Invalid API key");
+            }
+            else{
+                sqlquery = "SELECT * from motivation"
+                db.query(sqlquery, (err, response) => {
+                    if(err){
+                        return res.status(500).send('API issue');
+                    }
+                    else{
+                        res.json(response)
+                    }
+                });
+            }
+        });
+        
+        
+        
+    });
 
     //manage calories api:
     app.get('/search-calories', (req, res) => {
-        const foodName = req.query.foodName;
+        const foodName = req.sanitize(req.query.foodName);
         // keys:
         const appId = '1c372e6a';
         const appKey = '3387bd7662b53c67390eb9a7113c32cd';
@@ -367,9 +413,19 @@ module.exports = function(app, shopData) {
                 resultsList = [];
                 for (let i = result.length - 1; i >= 0; i--) {
                     resultsList.push({ date: result[i].date_uploaded,image_path: result[i].path_to});
-                }
-                
-                res.render("loggedin.ejs", { username: username, resultsList: resultsList });
+                } 
+                //get the name and api key for the current user:
+                sqlquery = "SELECT first_name,keyId from users where username = ?";
+                db.query(sqlquery, [username], (err, result) => {
+                    if(err){
+                        return res.status(500).send('Database Error when searching for the user');
+                    }
+                    else{                                       
+                        //render the calendar page:
+                        //we want name and keyId
+                        res.render("loggedin.ejs", { username: username, resultsList: resultsList,name:result[0].first_name,keyId:result[0].keyId });
+                    }
+                });
             }
         });
     });
@@ -426,7 +482,19 @@ module.exports = function(app, shopData) {
                                         for (let i = result.length - 1; i >= 0; i--) {
                                             resultsList.push({ date: result[i].date_uploaded,image_path: result[i].path_to});
                                         }
-                                        res.render("loggedin.ejs", { username: username, resultsList: resultsList });
+
+                                        //get the name and api key for the current user:
+                                        sqlquery = "SELECT first_name,keyId from users where username = ?";
+                                        db.query(sqlquery, [username], (err, result) => {
+                                            if(err){
+                                                return res.status(500).send('Database Error when searching for the user');
+                                            }
+                                            else{                                       
+                                                //render the calendar page:
+                                                //we want name and keyId
+                                                res.render("loggedin.ejs", { username: username, resultsList: resultsList,name:result[0].first_name,keyId:result[0].keyId });
+                                            }
+                                        });
                                     }
                                 });
                             } else {
