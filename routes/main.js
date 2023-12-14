@@ -21,7 +21,7 @@ module.exports = function(app, shopData) {
     const redirectLogin = (req, res, next) => {
         if (!req.session.userId ) {
             req.session.returnTo = req.originalUrl;
-            res.redirect('/login')
+            return res.redirect('login');
         } else { next (); }
     }
     
@@ -30,7 +30,7 @@ module.exports = function(app, shopData) {
     app.get('/logout', redirectLogin, (req, res) => {
         req.session.destroy(err => {
             if (err) {
-                return res.redirect('/');
+                console.error('Error destroying session:', err);
             }
             res.redirect('/');
         });
@@ -96,8 +96,6 @@ module.exports = function(app, shopData) {
             }
  
         });
-
-
         bcrypt.hash(plainPassword, saltRounds).then(hashedPassword => {
             // Construct the SQL query after password hashing is complete
             let sqlquery = `INSERT INTO users (username, first_name, last_name, email, hashedPassword, keyId) VALUES (?, ?, ?, ?, ?, ?)`;
@@ -111,7 +109,7 @@ module.exports = function(app, shopData) {
                     // result = 'Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
                     // result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword
                     req.session.userId = req.body.username;
-                    return res.redirect('/');
+                    return res.redirect('/loggedin');
                 }
             }); 
             })
