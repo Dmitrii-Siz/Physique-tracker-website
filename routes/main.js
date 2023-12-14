@@ -109,7 +109,7 @@ module.exports = function(app, shopData) {
                     // result = 'Hello '+ req.body.first + ' '+ req.body.last +' you are now registered!  We will send an email to you at ' + req.body.email;
                     // result += 'Your password is: '+ req.body.password +' and your hashed password is: '+ hashedPassword
                     req.session.userId = req.body.username;
-                    return res.redirect('/loggedin');
+                    return res.redirect('loggedin');
                 }
             }); 
             })
