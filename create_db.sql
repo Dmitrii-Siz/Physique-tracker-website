@@ -1,5 +1,5 @@
 CREATE DATABASE physique_tracker;
-USE use physique_tracker;
+USE physique_tracker;
 CREATE USER 'appuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'app2027';
 GRANT ALL PRIVILEGES ON physique_tracker.* TO 'appuser'@'localhost';
 

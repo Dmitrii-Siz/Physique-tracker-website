@@ -26,17 +26,17 @@ app.use(session({
 
 // Define the database connection
 const db = mysql.createConnection ({
- host: 'localhost',
- user: 'appuser',
- password: 'app2027',
- database: 'physique_tracker'
-});
-// Connect to the database
-db.connect((err) => {
- if (err) {
- throw err;
- }
- console.log('Connected to database');
+    host: 'localhost',
+    user: 'appuser',
+    password: 'app2027',
+    database: 'physique_tracker'
+    });
+    // Connect to the database
+    db.connect((err) => {
+    if (err) {
+    throw err;
+    }
+    console.log('Connected to database');
 });
 global.db = db; 
 

@@ -20,7 +20,8 @@ module.exports = function(app, shopData) {
     //redirect to the login part if the user isnt signed in:
     const redirectLogin = (req, res, next) => {
         if (!req.session.userId ) {
-          res.redirect('/login')
+            req.session.returnTo = req.originalUrl;
+            res.redirect('/login')
         } else { next (); }
     }
     
@@ -432,10 +433,9 @@ module.exports = function(app, shopData) {
 
 
     //login page backend:
-    app.get('/login', function (req,res) {
+    app.get('/login',function(req,res){
         res.render('login.ejs', { shopData, errorMessage: null });                                                                  
     });
-
     //log in
     app.post('/loggedin', function (req, res) {
         const bcrypt = require('bcrypt');
