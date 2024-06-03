@@ -14,10 +14,6 @@ Skills Learnt:
 - SQL - CRUD database operations
 - Storing the current user session
 
-Video Demo:
-
-
-
 
 
 
